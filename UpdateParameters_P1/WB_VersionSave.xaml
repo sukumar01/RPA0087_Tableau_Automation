@@ -71,19 +71,27 @@
       <AssemblyReference>UiPath.CV</AssemblyReference>
       <AssemblyReference>System.ComponentModel.Composition</AssemblyReference>
       <AssemblyReference>Microsoft.VisualStudio.Services.Common</AssemblyReference>
+      <AssemblyReference>System.Runtime.WindowsRuntime</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence sap2010:Annotation.AnnotationText="Desciption: Update the version of the Tableau workbook file while saving based on the machine application version. Current code changes the version to 2019.1&#xA;&#xA;Technical details: &#xA;Check flag [VersionUpdate] from config to check the condition for saving.&#xA;Click, type are used for navigation.&#xA; &#xA;&#xA;Dev Details: Created by Shivani Karla &#xA;Creatde Date : 7th August 2020" DisplayName=" WB_VersionSave" sap2010:WorkflowViewState.IdRef="Sequence_2">
     <Sequence.Variables>
       <Variable x:TypeArguments="x:Boolean" Name="vBoolFIleExists" />
     </Sequence.Variables>
+    <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Version save started&quot;]" />
     <ui:PathExists DisplayName="Temp Path Exists" Exists="[vBoolFIleExists]" sap2010:WorkflowViewState.IdRef="PathExists_2" Path="[In_config(&quot;Local_WB_Folder&quot;).ToString+In_Config(&quot;LocalUpdateFolder&quot;).ToString+&quot;\&quot;+ argInFileName]" PathType="File" />
     <If Condition="[vBoolFIleExists]" DisplayName="If Exists" sap2010:WorkflowViewState.IdRef="If_3">
       <If.Then>
-        <ui:Delete ContinueOnError="False" DisplayName="Delete Old File" sap2010:WorkflowViewState.IdRef="Delete_2" Path="[In_config(&quot;Local_WB_Folder&quot;).ToString+In_Config(&quot;LocalUpdateFolder&quot;).ToString+&quot;\&quot;+ argInFileName]" />
+        <Sequence sap2010:WorkflowViewState.IdRef="Sequence_5">
+          <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_5" Level="Info" Message="[&quot;Delete old temp file&quot;]" />
+          <ui:Delete ContinueOnError="False" DisplayName="Delete Old File" sap2010:WorkflowViewState.IdRef="Delete_2" Path="[In_config(&quot;Local_WB_Folder&quot;).ToString+In_Config(&quot;LocalUpdateFolder&quot;).ToString+&quot;\&quot;+ argInFileName]" />
+        </Sequence>
       </If.Then>
+      <If.Else>
+        <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_6" Level="Info" Message="[&quot;No old temp file&quot;]" />
+      </If.Else>
     </If>
-    <ui:WindowScope ApplicationWindow="{x:Null}" SearchScope="{x:Null}" TimeoutMS="{x:Null}" Window="{x:Null}" DisplayName="Attach Window Tableau" sap2010:WorkflowViewState.IdRef="WindowScope_1" InformativeScreenshot="4caed7988e8468c1989e85175f946367" Selector="&lt;wnd app='tableau.exe' omit:cls='Qt5QWindowIcon' title='Tableau - *' /&gt;">
+    <ui:WindowScope ApplicationWindow="{x:Null}" SearchScope="{x:Null}" TimeoutMS="{x:Null}" Window="{x:Null}" DisplayName="Attach Window Tableau - Version Save" sap2010:WorkflowViewState.IdRef="WindowScope_1" InformativeScreenshot="4caed7988e8468c1989e85175f946367" Selector="&lt;wnd app='tableau.exe' omit:cls='Qt5QWindowIcon' title='Tableau - *' /&gt;">
       <ui:WindowScope.Body>
         <ActivityAction x:TypeArguments="x:Object">
           <ActivityAction.Argument>
@@ -94,7 +102,7 @@
               <Variable x:TypeArguments="x:TimeSpan" Default="00:00:10" Name="vTimeDelaySmall" />
             </Sequence.Variables>
             <Delay Duration="[vTimeDelaySmall]" sap2010:WorkflowViewState.IdRef="Delay_4" />
-            <ui:Click AlterIfDisabled="{x:Null}" SendWindowMessages="{x:Null}" SimulateClick="{x:Null}" ClickType="CLICK_SINGLE" DelayBefore="[cint( in_Config(&quot;BotDelaySmall&quot;).ToString)]" DelayMS="[cint( in_Config(&quot;BotDelaySmall&quot;).ToString)]" DisplayName="Click File" sap2010:WorkflowViewState.IdRef="Click_1" KeyModifiers="None" MouseButton="BTN_LEFT">
+            <ui:Click AlterIfDisabled="{x:Null}" SendWindowMessages="{x:Null}" SimulateClick="{x:Null}" ClickType="CLICK_SINGLE" DelayBefore="[cint( in_Config(&quot;BotDelaySmall&quot;).ToString)+cint( in_Config(&quot;BotDelaySmall&quot;).ToString)]" DelayMS="[cint( in_Config(&quot;BotDelaySmall&quot;).ToString)]" DisplayName="Click File" sap2010:WorkflowViewState.IdRef="Click_1" KeyModifiers="None" MouseButton="BTN_LEFT">
               <ui:Click.CursorPosition>
                 <ui:CursorPosition Position="Center">
                   <ui:CursorPosition.OffsetX>
@@ -116,6 +124,7 @@
             <If Condition="[in_Config(&quot;VersionUpdate&quot;).ToString.Trim.ToLower=&quot;yes&quot;]" sap2010:WorkflowViewState.IdRef="If_2">
               <If.Then>
                 <Sequence sap2010:WorkflowViewState.IdRef="Sequence_3">
+                  <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;Save workbook in different version&quot;]" />
                   <ui:Click AlterIfDisabled="{x:Null}" SendWindowMessages="{x:Null}" SimulateClick="{x:Null}" ClickType="CLICK_SINGLE" DelayBefore="[cint( in_Config(&quot;BotDelaySmall&quot;).ToString)]" DelayMS="[cint( in_Config(&quot;BotDelaySmall&quot;).ToString)]" DisplayName="Click Export As" sap2010:WorkflowViewState.IdRef="Click_6" KeyModifiers="None" MouseButton="BTN_LEFT">
                     <ui:Click.CursorPosition>
                       <ui:CursorPosition Position="Center">
@@ -214,6 +223,7 @@
               </If.Then>
               <If.Else>
                 <Sequence sap2010:WorkflowViewState.IdRef="Sequence_4">
+                  <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_4" Level="Info" Message="[&quot;Save workbook as is&quot;]" />
                   <ui:Click AlterIfDisabled="{x:Null}" DelayBefore="{x:Null}" DelayMS="{x:Null}" SendWindowMessages="{x:Null}" SimulateClick="{x:Null}" ClickType="CLICK_SINGLE" DisplayName="Click Save  As" sap2010:WorkflowViewState.IdRef="Click_12" KeyModifiers="None" MouseButton="BTN_LEFT">
                     <ui:Click.CursorPosition>
                       <ui:CursorPosition Position="Center">
@@ -270,11 +280,12 @@
         </ActivityAction>
       </ui:WindowScope.Body>
     </ui:WindowScope>
-    <sads:DebugSymbol.Symbol>d2JDOlxVc2Vyc1xzdWt1bWFyMVxEb2N1bWVudHNcVWlQYXRoXFRhYmxlYXVfUGFyYW1ldGVyVXBkYXRlXFVwZGF0ZVBhcmFtZXRlcnNfUDFcV0JfVmVyc2lvblNhdmUueGFtbF9MA5ICDgIBAVAFUJcCAgFyUQVVCgIBaVYFkAIWAgECUDpQTQIBd1CCAVCEAgIBc1ETUSYCAWpTCVP/AQIBbFaGAlbVAgIBaFwLjQIWAgEDUyRTKwIBcVN6U/wBAgFtXj5eSAIBBGANYF0CAWVhDXMYAgFbdA2KAhICAQuLAg2LAl0CAQiMAg2MAsYCAgEFYB1gMAIBZmHrAmH1AgIBZG21AW3oAQIBY2HPAWGHAgIBYWFzYYEBAgFgbfYBbYACAgFfYdgCYd4CAgFeYY4BYcYBAgFcdBt0aQIBDHYR1QEcAgEl2AERiAIcAgEOiwIdiwIwAgEJjALcAYwCqwICAQeMArkCjALDAgIBBncTiQEeAgFRigETnAEeAgFHnQETpQEhAgE8pgETuAEeAgE2uQETwQEhAgEswgET1AEeAgEm2QET6wEeAgEf7AET9AEhAgEV9QEThwIeAgEPd/YCd4ADAgFagwG7AYMB/gECAVl31QF3jQICAVd3eXeHAQIBVoMBjAKDAZYCAgFVd+MCd+kCAgFUd5QBd8wBAgFSigH+AooBiAMCAVCWAbsBlgGsAgIBT4oB1QGKAY0CAgFNigF5igGHAQIBTJYBugKWAccCAgFLigHrAooB8QICAUqKAZQBigHMAQIBSJ8BggGfAfMBAgFGnQGUAp0BzAICAUSfAYECnwGLAgIBQ50BnwOdAdADAgFCnQGpAZ0BrwECAUGdAYYCnQGLAgIBQJ0BkAGdAZYBAgE/nQG8AZ0B9AECAT2mAZgCpgGiAgIBO7IBuwGyAbsCAgE6pgGjAaYBsQECATmyAckCsgHTAgIBOKYBhQKmAYsCAgE3uwG7AbsB8AICATW7Af4CuwGIAwIBNLkBxgK5AcgDAgEwuQHZAbkB3wECAS+5AcABuQHGAQIBLrkBjQK5AZMCAgEtwgGXAsIBoQICASvOAbsBzgG3AgIBKsIBowHCAbEBAgEpzgHFAs4B0gICASjCAYQCwgGKAgIBJ9kBmgLZAaQCAgEk5QG7AeUB9AECASPZAaMB2QGxAQIBIuUBggLlAYwCAgEh2QGHAtkBjQICASDuAbsB7gHmAgIBHu4B9ALuAf4CAgEd7AHGAuwByAMCARnsAdkB7AHfAQIBGOwBwAHsAcYBAgEX7AGNAuwBkwICARb1AZcC9QGhAgIBFIECuwGBAq0CAgET9QGjAfUBsQECARKBArsCgQLIAgIBEfUBhAL1AYoCAgEQ</sads:DebugSymbol.Symbol>
+    <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Version save completed&quot;]" />
+    <sads:DebugSymbol.Symbol>d2JDOlxVc2Vyc1xzdWt1bWFyMVxEb2N1bWVudHNcVWlQYXRoXFRhYmxlYXVfUGFyYW1ldGVyVXBkYXRlXFVwZGF0ZVBhcmFtZXRlcnNfUDFcV0JfVmVyc2lvblNhdmUueGFtbHJNA50CDgIBAVEFUZkBAwGKAVIFUpcCAwGDAVMFXQoCAXNeBZoCFgIBBZsCBZsCmwECAQJRclGWAQMBjAFRY1FpAwGLAVI6Uk0DAYgBUoIBUoQCAwGEAVMTUyYCAXRVCVgUAgF5WwlbmQECAXZelQJe5AICAXJkC5cCFgIBBpsCcpsCmAECAQSbAmObAmkCAQNWC1afAQMBgAFXC1eBAgIBelt2W5YBAgF4W2dbbQIBd2Y+ZkgCAQdoDWhdAgFvaQ17GAIBZHwNlAISAgEOlQINlQJdAgELlgINlgLGAgIBCFZ4VpwBAwGCAVZpVm8DAYEBVyZXLQIBf1d8V/4BAgF7aB1oMAIBcGmgA2mqAwIBbnW1AXXoAQIBbWmEAmm8AgIBa2lzaYEBAgFqdfYBdYACAgFpaY0DaZMDAgFoaY4BafsBAgFlfBt8aQIBD34R3gEcAgEr4QERkgIcAgERlQIdlQIwAgEMlgLcAZYCqwICAQqWArkClgLDAgIBCX8Tf7UBAgFhgAETkgEeAgFXkwETpQEeAgFNpgETrgEhAgFCrwETwQEeAgE8wgETygEhAgEyywET3QEeAgEs4gET4gGmAQIBKOMBE/UBHgIBIvYBE/4BIQIBGP8BE5ECHgIBEn+AAX+yAQIBY39xf3cCAWKAAfYCgAGAAwIBYIwBuwGMAf4BAgFfgAHVAYABjQICAV2AAXmAAYcBAgFcjAGMAowBlgICAVuAAeMCgAHpAgIBWoABlAGAAcwBAgFYkwH+ApMBiAMCAVafAbsBnwGsAgIBVZMB1QGTAY0CAgFTkwF5kwGHAQIBUp8BugKfAccCAgFRkwHrApMB8QICAVCTAZQBkwHMAQIBTqgBggGoAfMBAgFMpgGUAqYBzAICAUqoAYECqAGLAgIBSaYBnwOmAdADAgFIpgGpAaYBrwECAUemAYYCpgGLAgIBRqYBkAGmAZYBAgFFpgG8AaYB9AECAUOvAZgCrwGiAgIBQbsBuwG7AbsCAgFArwGjAa8BsQECAT+7AckCuwHTAgIBPq8BhQKvAYsCAgE9xAG7AcQB8AICATvEAf4CxAGIAwIBOsIBxgLCAcgDAgE2wgHZAcIB3wECATXCAcABwgHGAQIBNMIBjQLCAZMCAgEzywGXAssBoQICATHXAbsB1wG3AgIBMMsBowHLAbEBAgEv1wHFAtcB0gICAS7LAYQCywGKAgIBLeIBgAHiAaMBAgEq4gFx4gF3AgEp4wGaAuMBpAICASfvAbsB7wH0AQIBJuMBowHjAbEBAgEl7wGCAu8BjAICASTjAYcC4wGNAgIBI/gBuwH4AeYCAgEh+AH0AvgB/gICASD2AcYC9gHIAwIBHPYB2QH2Ad8BAgEb9gHAAfYBxgECARr2AY0C9gGTAgIBGf8BlwL/AaECAgEXiwK7AYsCrQICARb/AaMB/wGxAQIBFYsCuwKLAsgCAgEU/wGEAv8BigICARM=</sads:DebugSymbol.Symbol>
   </Sequence>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>
-      <sap2010:ViewStateData Id="PathExists_2" sap:VirtualizedContainerService.HintSize="505,51">
+      <sap2010:ViewStateData Id="LogMessage_1" sap:VirtualizedContainerService.HintSize="539,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -282,17 +293,43 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Delete_2" sap:VirtualizedContainerService.HintSize="200,22" />
-      <sap2010:ViewStateData Id="If_3" sap:VirtualizedContainerService.HintSize="505,51">
+      <sap2010:ViewStateData Id="PathExists_2" sap:VirtualizedContainerService.HintSize="539,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="LogMessage_5" sap:VirtualizedContainerService.HintSize="314,91" />
+      <sap2010:ViewStateData Id="Delete_2" sap:VirtualizedContainerService.HintSize="314,22" />
+      <sap2010:ViewStateData Id="Sequence_5" sap:VirtualizedContainerService.HintSize="200,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="LogMessage_6" sap:VirtualizedContainerService.HintSize="314,91" />
+      <sap2010:ViewStateData Id="If_3" sap:VirtualizedContainerService.HintSize="539,239">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
             <x:Boolean x:Key="IsPinned">False</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
       <sap2010:ViewStateData Id="Delay_4" sap:VirtualizedContainerService.HintSize="469,22" />
       <sap2010:ViewStateData Id="Click_1" sap:VirtualizedContainerService.HintSize="469,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="LogMessage_3" sap:VirtualizedContainerService.HintSize="200,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -348,10 +385,18 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Sequence_3" sap:VirtualizedContainerService.HintSize="222,630">
+      <sap2010:ViewStateData Id="Sequence_3" sap:VirtualizedContainerService.HintSize="222,721">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="LogMessage_4" sap:VirtualizedContainerService.HintSize="200,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
             <x:Boolean x:Key="IsPinned">False</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
@@ -380,14 +425,14 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="222,357">
+      <sap2010:ViewStateData Id="Sequence_4" sap:VirtualizedContainerService.HintSize="222,448">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="If_2" sap:VirtualizedContainerService.HintSize="469,777">
+      <sap2010:ViewStateData Id="If_2" sap:VirtualizedContainerService.HintSize="469,868">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -404,7 +449,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="491,1207">
+      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="491,1298">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -412,7 +457,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="WindowScope_1" sap:VirtualizedContainerService.HintSize="505,1353">
+      <sap2010:ViewStateData Id="WindowScope_1" sap:VirtualizedContainerService.HintSize="539,1444">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -420,7 +465,15 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Sequence_2" sap:VirtualizedContainerService.HintSize="527,1821">
+      <sap2010:ViewStateData Id="LogMessage_2" sap:VirtualizedContainerService.HintSize="539,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_2" sap:VirtualizedContainerService.HintSize="561,2282">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -428,7 +481,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="WB_VersionSave_1" sap:VirtualizedContainerService.HintSize="567,1901" />
+      <sap2010:ViewStateData Id="WB_VersionSave_1" sap:VirtualizedContainerService.HintSize="601,2362" />
     </sap2010:ViewStateManager>
   </sap2010:WorkflowViewState.ViewStateManager>
 </Activity>
