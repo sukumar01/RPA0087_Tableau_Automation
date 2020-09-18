@@ -84,7 +84,9 @@
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Sequence sap2010:Annotation.AnnotationText="Desciption: Upload the updated Tableau workbooks to Server. Create new sucess.txt file&#xA;&#xA;Technical details: &#xA;Read paths from config.&#xA;FTP activities to to updload and delete workbooks to WinSCP.&#xA;&#xA;&#xA;Dev Details: Created by Shivani Karla &#xA;Creatde Date : 7th August 2020" DisplayName="Upload WB to UNIX" sap2010:WorkflowViewState.IdRef="Sequence_1">
+    <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Create Success File&quot;]" />
     <ui:WriteTextFile DisplayName="Write Success Text File" FileName="[in_Config(&quot;Local_WB_Folder&quot;).tostring+&quot;Success.txt&quot;]" sap2010:WorkflowViewState.IdRef="WriteTextFile_1" Text="Success" />
+    <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;Sucess file created&quot;]" />
     <p:WithFtpSession ClientCertificatePassword="{x:Null}" ClientCertificatePath="{x:Null}" ContinueOnError="False" DisplayName="With ftp session" Host="[in_Config(&quot;FTP_UNIX_Server&quot;).ToString]" sap2010:WorkflowViewState.IdRef="WithFtpSession_1" Password="[new System.Net.NetworkCredential(string.Empty, argInFTPPassword).Password]" Port="[cint(In_Config(&quot;FTP_UNIX_Port&quot;).ToString)]" UseSftp="True" Username="[argInFTPUserName]">
       <p:WithFtpSession.Body>
         <ActivityAction x:TypeArguments="p:IFtpSession">
@@ -163,15 +165,32 @@
         </ActivityAction>
       </p:WithFtpSession.Body>
     </p:WithFtpSession>
-    <sads:DebugSymbol.Symbol>d2ZDOlxVc2Vyc1xzdWt1bWFyMVxEb2N1bWVudHNcVWlQYXRoXFRhYmxlYXVfUGFyYW1ldGVyVXBkYXRlXFVwbG9hZFRhYmxlYXVEYXNoYm9hcmRfUDJcVXBsb2FkV2luU0NQLnhhbWwzVgOnAQ4CAQFXBVfVAQIBRFgFpQEYAgECV8kBV9IBAgFHV0ZXkQECAUVYbVh0AgFDWKwDWMADAgFBWNwCWJMDAgE/WIkCWNYCAgE9WJkBWMwBAgE7XguiARYCAQNiDWKwAQIBN2MNY+UCAgEwZA18JQIBIn0Nfc0CAgEcfg2WASUCAQ6XAQ2XAf0BAgEJmAENoQEaAgEEYnpirQECATlia2JxAgE4Y68CY+ICAgE1YyxjMwIBNGOaAWOAAgIBMXlPeWICAS5wE3CHAQIBLGcTZ2ICAStqE2pOAgEqbRNtewIBKXpWem8CASd2E3Z7AgElcxNzQwIBJGS8AWTKAQIBI32UAn3KAgIBIH0sfTMCAR99mgF95QECAR2TAU+TAWICARqKAROKAYoBAgEYgQETgQFiAgEXhAEThAFOAgEWhwEThwGPAQIBFZQBVpQBbwIBE5ABE5ABewIBEY0BE40BQwIBEH68AX7KAQIBD5cByQGXAfoBAgEMlwExlwE4AgELlwFilwF2AgEKmAGqAZgBvgECAQieAROeAdYBAgEFngGKAZ4B0wECAQeeAS2eATQCAQY=</sads:DebugSymbol.Symbol>
+    <ui:LogMessage DisplayName="Log Message" Level="Info" Message="[&quot;File uploaded&quot;]" sap2010:WorkflowViewState.IdRef="LogMessage_4" />
+    <sads:DebugSymbol.Symbol>d2ZDOlxVc2Vyc1xzdWt1bWFyMVxEb2N1bWVudHNcVWlQYXRoXFRhYmxlYXVfUGFyYW1ldGVyVXBkYXRlXFVwbG9hZFRhYmxlYXVEYXNoYm9hcmRfUDJcVXBsb2FkV2luU0NQLnhhbWw8VgOqAQ4CAQFXBVeYAQIBTlgFWNUBAgFKWQVZmAECAUdaBacBGAIBBagBBagBkgECAQJXcleVAQIBUFdjV2kCAU9YyQFY0gECAU1YRliRAQIBS1lyWZUBAgFJWWNZaQIBSFptWnQCAUZarANawAMCAURa3AJakwMCAUJaiQJa1gICAUBamQFazAECAT5gC6QBFgIBBqgBQ6gBYAIBBKgBNKgBOgIBA2QNZLABAgE6ZQ1l5QICATNmDX4lAgElfw1/zQICAR+AAQ2YASUCARGZAQ2ZAf0BAgEMmgENowEaAgEHZHpkrQECATxka2RxAgE7Za8CZeICAgE4ZSxlMwIBN2WaAWWAAgIBNHtPe2ICATFyE3KHAQIBL2kTaWICAS5sE2xOAgEtbxNvewIBLHxWfG8CASp4E3h7AgEodRN1QwIBJ2a8AWbKAQIBJn+UAn/KAgIBI38sfzMCASJ/mgF/5QECASCVAU+VAWICAR2MAROMAYoBAgEbgwETgwFiAgEahgEThgFOAgEZiQETiQGPAQIBGJYBVpYBbwIBFpIBE5IBewIBFI8BE48BQwIBE4ABvAGAAcoBAgESmQHJAZkB+gECAQ+ZATGZATgCAQ6ZAWKZAXYCAQ2aAaoBmgG+AQIBC6ABE6AB1gECAQigAYoBoAHTAQIBCqABLaABNAIBCQ==</sads:DebugSymbol.Symbol>
   </Sequence>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>
-      <sap2010:ViewStateData Id="WriteTextFile_1" sap:VirtualizedContainerService.HintSize="200,51">
+      <sap2010:ViewStateData Id="LogMessage_2" sap:VirtualizedContainerService.HintSize="314,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="WriteTextFile_1" sap:VirtualizedContainerService.HintSize="314,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsPinned">False</x:Boolean>
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="LogMessage_3" sap:VirtualizedContainerService.HintSize="314,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
@@ -211,7 +230,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="WithFtpSession_1" sap:VirtualizedContainerService.HintSize="200,51">
+      <sap2010:ViewStateData Id="WithFtpSession_1" sap:VirtualizedContainerService.HintSize="314,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">False</x:Boolean>
@@ -219,7 +238,8 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="222,473">
+      <sap2010:ViewStateData Id="LogMessage_4" sap:VirtualizedContainerService.HintSize="314,91" />
+      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="336,756">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -227,7 +247,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="upload_1" sap:VirtualizedContainerService.HintSize="262,553" />
+      <sap2010:ViewStateData Id="upload_1" sap:VirtualizedContainerService.HintSize="376,836" />
     </sap2010:ViewStateManager>
   </sap2010:WorkflowViewState.ViewStateManager>
 </Activity>

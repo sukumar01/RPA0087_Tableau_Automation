@@ -79,6 +79,7 @@
       <AssemblyReference>UiPath.Database</AssemblyReference>
       <AssemblyReference>UiPath.System.Activities.Design</AssemblyReference>
       <AssemblyReference>UiPath.Studio.Plugin.Workflow</AssemblyReference>
+      <AssemblyReference>System.Runtime.WindowsRuntime</AssemblyReference>
     </sco:Collection>
   </TextExpression.ReferencesForImplementation>
   <Flowchart sap2010:Annotation.AnnotationText="Desciption: Upload the updated Tableau workbooks to Server if the execution status is 'Approves' and update the Execution status on DB. Clean up old Files&#xA;Technical details: &#xA;Read paths from config.&#xA;FTP activities to to updload and delete workbooks to WinSCP.&#xA;Dev Details: Created by Shivani Karla &#xA;Creatde Date : 7th August 2020" DisplayName="WB_ExecutionUpload" sap2010:WorkflowViewState.IdRef="Flowchart_1">
@@ -91,7 +92,7 @@
     </Flowchart.Variables>
     <Flowchart.StartNode>
       <FlowStep x:Name="__ReferenceID2" sap2010:WorkflowViewState.IdRef="FlowStep_3">
-        <Sequence DisplayName="Delete and Create new Files " sap2010:WorkflowViewState.IdRef="Sequence_3">
+        <Sequence DisplayName="Log Discard" sap2010:WorkflowViewState.IdRef="Sequence_3">
           <ui:InvokeWorkflowFile ContinueOnError="{x:Null}" DisplayName="Invoke Log workflow -W1" sap2010:WorkflowViewState.IdRef="InvokeWorkflowFile_7" UnSafe="False" WorkflowFileName="Log\Log.xaml">
             <ui:InvokeWorkflowFile.Arguments>
               <InArgument x:TypeArguments="x:String" x:Key="in_Step">Phase2- Upload</InArgument>
@@ -117,6 +118,7 @@
         <FlowStep.Next>
           <FlowStep x:Name="__ReferenceID1" sap2010:WorkflowViewState.IdRef="FlowStep_2">
             <Sequence DisplayName="Connect and Execute Query" sap2010:WorkflowViewState.IdRef="Sequence_2">
+              <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_2" Level="Info" Message="[&quot;Connect to DB&quot;]" />
               <ui:DatabaseConnect DatabaseConnection="[vDBConnection]" DisplayName="Connect Execution DB" sap2010:WorkflowViewState.IdRef="DatabaseConnect_1" ProviderName="System.Data.SqlClient" ConnectionString="[argInDBonnectionString]" />
               <ui:ExecuteQuery ContinueOnError="{x:Null}" TimeoutMS="{x:Null}" CommandType="Text" DataTable="[vDTExecutionData]" DisplayName="Execute ID Query" ExistingDbConnection="[vDBConnection]" sap2010:WorkflowViewState.IdRef="ExecuteQuery_2" Sql="[In_Config(&quot;Execution_ID_Query&quot;).ToString]">
                 <ui:ExecuteQuery.Parameters>
@@ -124,6 +126,7 @@
                 </ui:ExecuteQuery.Parameters>
               </ui:ExecuteQuery>
               <ui:DatabaseDisconnect DatabaseConnection="[vDBConnection]" DisplayName="Disconnect ID" sap2010:WorkflowViewState.IdRef="DatabaseDisconnect_1" />
+              <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_3" Level="Info" Message="[&quot;Disconnect DB&quot;]" />
               <Assign DisplayName="Assign - get ExecutionID" sap2010:WorkflowViewState.IdRef="Assign_3">
                 <Assign.To>
                   <OutArgument x:TypeArguments="x:String">[vStrExecutionID]</OutArgument>
@@ -154,7 +157,7 @@
                   </Assign>
                 </If.Else>
               </If>
-              <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[vStrExecutionID+ vIntApprovedItems.ToString]" />
+              <ui:LogMessage DisplayName="Log Message" sap2010:WorkflowViewState.IdRef="LogMessage_1" Level="Info" Message="[&quot;Execution ID &quot;+vStrExecutionID+ &quot; and Approved Items &quot;+vIntApprovedItems.ToString]" />
             </Sequence>
             <FlowStep.Next>
               <FlowDecision x:Name="__ReferenceID3" Condition="[vIntApprovedItems= vDTExecutionData.Rows.Count]" DisplayName="Approved" sap2010:WorkflowViewState.IdRef="FlowDecision_1">
@@ -288,19 +291,19 @@
     <x:Reference>__ReferenceID7</x:Reference>
     <x:Reference>__ReferenceID8</x:Reference>
     <x:Reference>__ReferenceID9</x:Reference>
-    <sads:DebugSymbol.Symbol>d2xDOlxVc2Vyc1xzdWt1bWFyMVxEb2N1bWVudHNcVWlQYXRoXFRhYmxlYXVfUGFyYW1ldGVyVXBkYXRlXFVwbG9hZFRhYmxlYXVEYXNoYm9hcmRfUDJcV0JfRXhlY3V0aW9uVXBsb2FkLnhhbWxuVAOkAg8CAQFeCXQUAwGKAXcNngEYAgFmoAE/oAFxAgFl6QFD6QGUAQIBZIICGY4CMQIBVuwBGfgBMQIBSvsBHfsBzgECAUijARWvAS0CATqyARm6ATECAS69AR3hASgCAQJfC2sjAwGPAWwLcxQDAYsBeA948gEDAYQBeQ99IQIBfX4PfqABAgF6fw+GARgCAXaHAQ+cARQCAWydAQ+dAa4BAgFniwJbiwJsAgFihwJYhwJ/AgFghAJUhAJiAgFfhQJdhQJqAgFehgJchgKCAQIBXYwCYowCegIBW4kCcIkCewIBWYgCW4gCXQIBWIICyAGCAtYBAgFX9QFb9QFsAgFU7gFU7gFkAgFT7wFd7wFvAgFS8AFc8AG8AQIBUfYBYvYBegIBT/MBcPMBewIBTfIBW/IBXgIBTOwByAHsAdYBAgFL+wFN+wGhAQIBSawBV6wBaAIBRqgBVKgBewIBRKUBUKUBYAIBQ6YBWaYBZgIBQqcBWKcBpgECAUGtAV6tAXYCAT+qAWyqAXcCAT2pAVepAVkCATyjAcQBowHSAQIBO7cBXrcBcAIBOLgBZLgBfAIBNrQBcLQBewIBNLYBZLYBdgIBMrIBzQGyAfoBAgExtQFdtQFvAgEvvgEfvgGCAgIBKL8BH8MBNAIBJMQBH8gBNAIBH8kBH80BNAIBG84BH84BrQECARjPAR/bATcCAQzcAR/gATQCAQNoTWhfAwGbAWRKZHEDAZkBYUZhVAMBmAFiT2JcAwGXAWNOY3IDAZYBaVRpbAMBlAFmYmZtAwGSAWVNZU8DAZEBX7oBX8gBAwGQAXE6cUkDAY4BbjtuSwMBjAF4rAF4wwEDAYkBeNUBeO8BAwGHAXg2eEcDAYUBebYBeccBAwGCAXlteYEBAwGAAXn9AXmzAgIBfn45fkoCAXuEATqEAZwBAgF5gQE7gQFMAgF3hwEdhwFvAgFtiQETkAEcAgFykwETmgEcAgFunQF8nQGrAQIBaZ0BbZ0BcwIBaL4BvAG+AdMBAgEtvgHlAb4B/wECASu+AUa+AVcCASm/AcYBvwHXAQIBJr8BkAK/AbMCAgElxAHGAcQB1wECASLEAZACxAGEAwIBIMkBxgHJAdcBAgEdyQGQAskBywICARzOAUnOAVoCARnYAWHYAXICARbRAVrRAXgCARXSAWPSAXACARTTAWLTAYYBAgET2QFo2QGAAQIBEdYBdtYBgQECAQ/VAWHVAWMCAQ7PAcYBzwHUAQIBDdwBqgbcAd0GAgEK3AGEAdwBtQECAQjcAbsB3AHiBAIBBtwB6QXcAaYGAgEEjgE9jgGSAQIBdYsBPosBUQIBc5gBPZgBPgIBcZUBPpUBUQIBbw==</sads:DebugSymbol.Symbol>
+    <sads:DebugSymbol.Symbol>d2xDOlxVc2Vyc1xzdWt1bWFyMVxEb2N1bWVudHNcVWlQYXRoXFRhYmxlYXVfUGFyYW1ldGVyVXBkYXRlXFVwbG9hZFRhYmxlYXVEYXNoYm9hcmRfUDJcV0JfRXhlY3V0aW9uVXBsb2FkLnhhbWx0VQOnAg8CAQFfCXUUAwGQAXgNoQEYAgFmowE/owFxAgFl7AFD7AGUAQIBZIUCGZECMQIBVu8BGfsBMQIBSv4BHf4BzgECAUimARWyAS0CATq1ARm9ATECAS7AAR3kASgCAQJgC2wjAwGVAW0LdBQDAZEBeQ95nAEDAY0Beg968gEDAYcBew9/IQMBgAGAAQ+AAaABAgF9gQEPgQGcAQIBeoIBD4kBGAIBdooBD58BFAIBbKABD6AB6QECAWeOAluOAmwCAWKKAliKAn8CAWCHAlSHAmICAV+IAl2IAmoCAV6JAlyJAoIBAgFdjwJijwJ6AgFbjAJwjAJ7AgFZiwJbiwJdAgFYhQLIAYUC1gECAVf4AVv4AWwCAVTxAVTxAWQCAVPyAV3yAW8CAVLzAVzzAbwBAgFR+QFi+QF6AgFP9gFw9gF7AgFN9QFb9QFeAgFM7wHIAe8B1gECAUv+AU3+AaEBAgFJrwFXrwFoAgFGqwFUqwF7AgFEqAFQqAFgAgFDqQFZqQFmAgFCqgFYqgGmAQIBQbABXrABdgIBP60BbK0BdwIBPawBV6wBWQIBPKYBxAGmAdIBAgE7ugFeugFwAgE4uwFkuwF8AgE2twFwtwF7AgE0uQFkuQF2AgEytQHNAbUB+gECATG4AV24AW8CAS/BAR/BAYICAgEowgEfxgE0AgEkxwEfywE0AgEfzAEf0AE0AgEb0QEf0QGtAQIBGNIBH94BNwIBDN8BH+MBNAIBA2lNaV8DAaEBZUplcQMBnwFiRmJUAwGeAWNPY1wDAZ0BZE5kcgMBnAFqVGpsAwGaAWdiZ20DAZgBZk1mTwMBlwFgugFgyAEDAZYBcjpySQMBlAFvO29LAwGSAXl8eZkBAwGPAXlteXMDAY4BeqwBesMBAwGMAXrVAXrvAQMBigF6NnpHAwGIAXu2AXvHAQMBhQF7bXuBAQMBgwF7/QF7swIDAYEBgAE5gAFKAgF+gQF8gQGZAQIBfIEBbYEBcwIBe4cBOocBnAECAXmEATuEAUwCAXeKAR2KAW8CAW2MAROTARwCAXKWAROdARwCAW6gAXygAeYBAgFpoAFtoAFzAgFowQG8AcEB0wECAS3BAeUBwQH/AQIBK8EBRsEBVwIBKcIBxgHCAdcBAgEmwgGQAsIBswICASXHAcYBxwHXAQIBIscBkALHAYQDAgEgzAHGAcwB1wECAR3MAZACzAHLAgIBHNEBSdEBWgIBGdsBYdsBcgIBFtQBWtQBeAIBFdUBY9UBcAIBFNYBYtYBhgECARPcAWjcAYABAgER2QF22QGBAQIBD9gBYdgBYwIBDtIBxgHSAdQBAgEN3wGqBt8B3QYCAQrfAYQB3wG1AQIBCN8BuwHfAeIEAgEG3wHpBd8BpgYCAQSRAT2RAZIBAgF1jgE+jgFRAgFzmwE9mwE+AgFxmAE+mAFRAgFv</sads:DebugSymbol.Symbol>
   </Flowchart>
   <sap2010:WorkflowViewState.ViewStateManager>
     <sap2010:ViewStateManager>
-      <sap2010:ViewStateData Id="InvokeWorkflowFile_7" sap:VirtualizedContainerService.HintSize="314,87">
+      <sap2010:ViewStateData Id="InvokeWorkflowFile_7" sap:VirtualizedContainerService.HintSize="242,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
             <x:Boolean x:Key="IsPinned">False</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Assign_1" sap:VirtualizedContainerService.HintSize="314,60" />
+      <sap2010:ViewStateData Id="Assign_1" sap:VirtualizedContainerService.HintSize="242,60" />
       <sap2010:ViewStateData Id="Sequence_3" sap:VirtualizedContainerService.HintSize="200,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
@@ -308,33 +311,57 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="DatabaseConnect_1" sap:VirtualizedContainerService.HintSize="509,59">
+      <sap2010:ViewStateData Id="LogMessage_2" sap:VirtualizedContainerService.HintSize="314,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsPinned">False</x:Boolean>
-            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
-          </scg:Dictionary>
-        </sap:WorkflowViewStateService.ViewState>
-      </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="ExecuteQuery_2" sap:VirtualizedContainerService.HintSize="509,88">
-        <sap:WorkflowViewStateService.ViewState>
-          <scg:Dictionary x:TypeArguments="x:String, x:Object">
-            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
             <x:Boolean x:Key="IsPinned">False</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="DatabaseDisconnect_1" sap:VirtualizedContainerService.HintSize="509,22">
+      <sap2010:ViewStateData Id="DatabaseConnect_1" sap:VirtualizedContainerService.HintSize="314,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="ExecuteQuery_2" sap:VirtualizedContainerService.HintSize="314,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="DatabaseDisconnect_1" sap:VirtualizedContainerService.HintSize="314,22">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="Assign_3" sap:VirtualizedContainerService.HintSize="509,60" />
+      <sap2010:ViewStateData Id="LogMessage_3" sap:VirtualizedContainerService.HintSize="314,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Assign_3" sap:VirtualizedContainerService.HintSize="314,60" />
       <sap2010:ViewStateData Id="Assign_2" sap:VirtualizedContainerService.HintSize="242,60" />
       <sap2010:ViewStateData Id="Assign_4" sap:VirtualizedContainerService.HintSize="242,60" />
-      <sap2010:ViewStateData Id="If_3" sap:VirtualizedContainerService.HintSize="509,208">
+      <sap2010:ViewStateData Id="If_3" sap:VirtualizedContainerService.HintSize="314,51">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="LogMessage_1" sap:VirtualizedContainerService.HintSize="314,91">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -342,8 +369,7 @@
           </scg:Dictionary>
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
-      <sap2010:ViewStateData Id="LogMessage_1" sap:VirtualizedContainerService.HintSize="509,91" />
-      <sap2010:ViewStateData Id="Sequence_2" sap:VirtualizedContainerService.HintSize="200,51">
+      <sap2010:ViewStateData Id="Sequence_2" sap:VirtualizedContainerService.HintSize="336,832">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
@@ -351,7 +377,7 @@
         </sap:WorkflowViewStateService.ViewState>
       </sap2010:ViewStateData>
       <sap2010:ViewStateData Id="InvokeWorkflowFile_4" sap:VirtualizedContainerService.HintSize="200,51" />
-      <sap2010:ViewStateData Id="InvokeWorkflowFile_5" sap:VirtualizedContainerService.HintSize="330,87">
+      <sap2010:ViewStateData Id="InvokeWorkflowFile_5" sap:VirtualizedContainerService.HintSize="200,51">
         <sap:WorkflowViewStateService.ViewState>
           <scg:Dictionary x:TypeArguments="x:String, x:Object">
             <x:Boolean x:Key="IsExpanded">True</x:Boolean>
